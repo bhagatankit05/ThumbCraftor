@@ -18,7 +18,7 @@ export default function Navbar() {
                 transition={{ type: "spring", stiffness: 250, damping: 70, mass: 1 }}
             >
                 <Link to="/">
-                    <img className="h-8.5 w-auto" src="/logo.svg" alt="logo" width={130} height={34} />
+                    <img className="h-12 w-auto" src="/logotc1.png" alt="logo" width={180} height={40} />
                 </Link>
 
                 <div className="hidden md:flex items-center gap-8 transition duration-500">
