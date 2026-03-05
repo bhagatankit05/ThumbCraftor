@@ -9,28 +9,33 @@ import {
 import SoftBackdrop from "../components/SoftBackdrop";
 import AspectRatioSelector from "../components/AspectRatioSelector";
 import StyleSelector from "../components/StyleSelector";
+import ColourSchemeSelector from "../components/ColourSchemeSelector";
 
 const Generate = () => {
   const { id } = useParams();
+
   const [title, setTitle] = useState("");
   const [additionalDetails, setAdditionalDetails] = useState("");
   const [thumbnail, setThumbnail] = useState<IThumbnail | null>(null);
   const [loading, setLoading] = useState(false);
+
   const [aspectRatio, setAspectratio] = useState<AspectRatio>("16:9");
   const [colorSchemeId, setColorSchemeId] = useState<string | null>(
     colorSchemes[0].id,
   );
+
   const [style, setStyle] = useState<ThumbnailStyle>("Bold & Graphic");
   const [styleDropdownOpen, setStyleDropdownOpen] = useState(false);
 
   return (
     <>
       <SoftBackdrop />
+
       <div className="pt-24 min-h-screen">
         <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-28 lg:pb-8">
           <div className="grid lg:grid-cols-[400px_1fr] gap-8">
-            {/*LEFT Panel */}
-            <div className={`space-y-6 ${id && "pointer-events-none"}`}>
+            {/* LEFT Panel */}
+            <div className={`space-y-6 ${id ? "pointer-events-none" : ""}`}>
               <div className="p-6 rounded-2xl bg-white/8 border border-white/12 shadow-xl space-y-6">
                 <div>
                   <h2 className="text-xl font-bold text-zinc-100 mb-1">
@@ -40,12 +45,14 @@ const Generate = () => {
                     Type your vision, and let AI design it instantly.
                   </p>
                 </div>
+
                 <div className="space-y-5">
-                  {/*Input*/}
+                  {/* Input */}
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium ">
+                    <label className="block text-sm font-medium">
                       Thumbnail Title or Topic
                     </label>
+
                     <input
                       type="text"
                       value={title}
@@ -61,22 +68,34 @@ const Generate = () => {
                       </span>
                     </div>
                   </div>
-                  {/*Aspect ratio selector */}
+
+                  {/* Aspect Ratio */}
                   <AspectRatioSelector
                     value={aspectRatio}
                     onChange={setAspectratio}
                   />
-                  {/*Style selector */}
-                  <StyleSelector value={style} onChange={setStyle} isOpen={styleDropdownOpen} setIsOpen={setStyleDropdownOpen}/>
-                  {/*color scheme selector */}
 
-                  {/*Additional details*/}
+                  {/* Style */}
+                  <StyleSelector
+                    value={style}
+                    onChange={setStyle}
+                    isOpen={styleDropdownOpen}
+                    setIsOpen={setStyleDropdownOpen}
+                  />
 
+                  {/* Color Scheme */}
+                  <ColourSchemeSelector
+                    value={colorSchemeId || ""}
+                    onChange={setColorSchemeId}
+                  />
+
+                  {/* Additional details */}
                   <div className="space-y-2">
                     <label className="block text-sm font-medium">
-                      Additional Prompts{" "}
-                      <span className="text-xs text-zinc-400">(Optional)</span>
+                      Additional Prompts
+                      <span className="text-xs text-zinc-400"> (Optional)</span>
                     </label>
+
                     <textarea
                       value={additionalDetails}
                       onChange={(e) => setAdditionalDetails(e.target.value)}
@@ -86,15 +105,17 @@ const Generate = () => {
                     />
                   </div>
                 </div>
-                {/**Button */}
+
+                {/* Button */}
                 {!id && (
-                  <button className="text-[15px] w-full py-3.5 rounded-xl font-medium bg-linear-to-b from-pink-500 to pink-600 hover:from-pink-700 disabled:cursor-not-allowed transition-colors">
+                  <button className="text-[15px] w-full py-3.5 rounded-xl font-medium bg-linear-to-b from-pink-500 to-pink-600 hover:from-pink-700 disabled:cursor-not-allowed transition-colors">
                     {loading ? "Generating..." : "Generate Thumbnail"}
                   </button>
                 )}
               </div>
             </div>
-            {/*RIGHT Panel */}
+
+            {/* RIGHT Panel */}
             <div></div>
           </div>
         </main>
