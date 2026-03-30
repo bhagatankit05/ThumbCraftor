@@ -128,7 +128,7 @@ export const generateThumbnail = async (req: Request, res: Response) => {
 
     for (const part of parts) {
       if (part.inlineData) {
-        finalBuffer = Buffer.from(part.inlineData, "base64");
+       finalBuffer = Buffer.from(part.inlineData.data, "base64");
       }
     }
 
