@@ -128,7 +128,7 @@ export const generateThumbnail = async (req: Request, res: Response) => {
 
     for (const part of parts) {
       if (part.inlineData) {
-       finalBuffer = Buffer.from(part.inlineData.data, "base64");
+        finalBuffer = Buffer.from(part.inlineData.data, "base64");
       }
     }
 
@@ -162,16 +162,15 @@ export const generateThumbnail = async (req: Request, res: Response) => {
   }
 };
 //controllers for thumbnail deletion
-export const deleteThumbnail = async (req: Request, res: Response) =>{
-    try {
-        const { id } = req.params;
-        const {userId} = req.session;
+export const deleteThumbnail = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { userId } = req.session;
 
-        await Thumbnail.findByIdAndDelete({_id: id, userId});
-        res.json({message: "Thumbnail Deleted Successfully!"});
-        
-    } catch (error: any) {
+    await Thumbnail.findByIdAndDelete({ _id: id, userId });
+    res.json({ message: "Thumbnail Deleted Successfully!" });
+  } catch (error: any) {
     console.log(error);
     res.status(500).json({ message: error.message || "Server Error" });
   }
-}
+};
