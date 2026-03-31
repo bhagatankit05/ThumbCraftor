@@ -9,7 +9,7 @@ import YtPreview from "./pages/YtPreview";
 import Login from "./components/Login";
 import MyGenerations from "./pages/MyGenerations";
 import { useEffect } from "react";
-
+import {Toaster} from 'react-hot-toast'
 export default function App() {
   const {pathname} = useLocation();
   useEffect(()=>(
@@ -17,6 +17,7 @@ export default function App() {
   ),[pathname])
   return (
     <>
+    <Toaster/>
       <LenisScroll />
       <Navbar />
       <Routes>
