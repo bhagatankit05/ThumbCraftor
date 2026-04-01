@@ -18,14 +18,22 @@ declare module "express-session" {
 await connectDB();
 const app = express();
 
-// Middleware — allow Vite dev on localhost or 127.0.0.1 with any port
+/** Production frontend(s); browsers send Origin without a trailing slash */
+const PRODUCTION_ORIGINS = new Set<string>([
+  "https://thumb-craftor.vercel.app",
+]);
+
+// Middleware — dev (localhost / 127.0.0.1) + production frontend
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (
-        !origin ||
-        /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin)
-      ) {
+      if (!origin) {
+        return callback(null, true);
+      }
+      if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin)) {
+        return callback(null, true);
+      }
+      if (PRODUCTION_ORIGINS.has(origin)) {
         return callback(null, true);
       }
       return callback(new Error("Not allowed by CORS"));
