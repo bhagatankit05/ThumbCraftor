@@ -2,6 +2,31 @@ import { createContext, useContext, useEffect, useState } from "react";
 import type { IUser } from "../assets/assets";
 import api from "../configs/api";
 import toast from "react-hot-toast";
+import axios from "axios";
+
+function authPayloadToUser(data: {
+  user?: IUser & { _id?: string };
+  _id?: string;
+  name?: string;
+  email?: string;
+}): IUser | null {
+  if (data.user) return data.user as IUser;
+  if (data._id != null && data.name != null && data.email != null) {
+    return { name: data.name, email: data.email, _id: data._id } as IUser;
+  }
+  return null;
+}
+
+function getErrorMessage(error: unknown, fallback: string) {
+  if (axios.isAxiosError(error)) {
+    return (
+      (error.response?.data as { message?: string } | undefined)?.message ||
+      error.message ||
+      fallback
+    );
+  }
+  return fallback;
+}
 
 interface AuthContextProps{
     isLoggedIn: boolean;
@@ -33,26 +58,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const signUp = async({ name, email, password }: { name: string; email: string; password: string }) => {
         try {
             const {data} = await api.post('/api/auth/register', { name, email, password });
-            if(data?.user){
-                setUser(data.user as IUser);
+            const nextUser = authPayloadToUser(data);
+            if (nextUser) {
+                setUser(nextUser);
                 setIsLoggedIn(true);
             }
             toast.success(data.message || "Registration successful");
         } catch (error) {
-            toast.error("Registration failed");
+            toast.error(getErrorMessage(error, "Registration failed"));
         }
     }
 
     const login = async({ email, password }: { email: string; password: string }) => {
         try {
             const {data} = await api.post('/api/auth/login', { email, password });
-            if(data?.user){
-                setUser(data.user as IUser);
+            const nextUser = authPayloadToUser(data);
+            if (nextUser) {
+                setUser(nextUser);
                 setIsLoggedIn(true);
             }
             toast.success(data.message || "Login successful");
         } catch (error) {
-            toast.error("Login failed");
+            toast.error(getErrorMessage(error, "Login failed"));
         }
     }
     const logout = async()=>{
@@ -62,7 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setIsLoggedIn(false);
             toast.success(data.message || "Logout successful");
         } catch (error) {
-            toast.error("Logout failed");
+            toast.error(getErrorMessage(error, "Logout failed"));
         }
     }
     const fetchUser = async()=>{
@@ -72,8 +99,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 setUser(data.user as IUser);
                 setIsLoggedIn(true);
             }
-        } catch (error) {
-            toast.error("Failed to fetch user");
+        } catch {
+            /* not logged in or session expired — expected on first visit */
         }
 
     }
