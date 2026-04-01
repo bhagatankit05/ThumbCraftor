@@ -1,20 +1,14 @@
 import { useEffect, useState } from "react";
-import {type IThumbnail } from "../assets/assets";
+import { type IThumbnail } from "../assets/assets";
 import SoftBackdrop from "../components/SoftBackdrop";
-import {
-  ArrowUpRightIcon,
-  DownloadIcon,
-  TrashIcon,
-} from "lucide-react";
+import { ArrowUpRightIcon, DownloadIcon, TrashIcon } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../configs/api";
 import toast from "react-hot-toast";
 
 const MyGenerations = () => {
-
-  const {isLoggedIn} = useAuth();
-
+  const { isLoggedIn } = useAuth();
 
   const navigate = useNavigate();
 
@@ -28,22 +22,20 @@ const MyGenerations = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchThumbnails = async () => {
-   try {
-    setLoading(true);
-    const { data } = await api.get("/api/user/thumbnails");
-    setThumbnails(data.thumbnails || []);
-
-   } catch (error : any) {
-    console.error(error);
-    toast.error(error?.response?.data?.message || error.message);
-   } 
-    finally{
+    try {
+      setLoading(true);
+      const { data } = await api.get("/api/user/thumbnails");
+      setThumbnails(data.thumbnails || []);
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || error.message);
+    } finally {
       setLoading(false);
     }
   };
 
   const handleDownload = (image_url: string) => {
-   const link = document.createElement("a");
+    const link = document.createElement("a");
     link.href = image_url.replace("/upload/", "/upload/fl_attachment/");
     document.body.appendChild(link);
     link.click();
@@ -51,23 +43,23 @@ const MyGenerations = () => {
   };
 
   const handleDelete = async (id: string) => {
-   try {
-    const confirm = window.confirm("Are you sure you want to delete this thumbnail?");
-    if(!confirm) return;
-     const {data} = await api.delete(`/api/thumbnail/delete/${id}`);
-     toast.success(data.message);
+    try {
+      const confirm = window.confirm(
+        "Are you sure you want to delete this thumbnail?",
+      );
+      if (!confirm) return;
+      const { data } = await api.delete(`/api/thumbnail/delete/${id}`);
+      toast.success(data.message);
 
-     setThumbnails(thumbnails.filter((thumb) => thumb._id !== id));
-   
-   } catch (error : any) {
-    console.error(error);
-    toast.error(error?.response?.data?.message || error.message);
-    
-   }
+      setThumbnails(thumbnails.filter((thumb) => thumb._id !== id));
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || error.message);
+    }
   };
 
   useEffect(() => {
-    if(isLoggedIn){
+    if (isLoggedIn) {
       fetchThumbnails();
     }
   }, [isLoggedIn]);

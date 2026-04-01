@@ -8,6 +8,7 @@ import Generate from "./pages/Generate";
 import YtPreview from "./pages/YtPreview";
 import Login from "./components/Login";
 import MyGenerations from "./pages/MyGenerations";
+import About from "./pages/About";
 import { useEffect } from "react";
 import {Toaster} from 'react-hot-toast'
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<About />} />
         <Route path="/generate" element={<Generate />} />
         <Route path="/generate/:id" element={<Generate />} />
         <Route path="/my-generations" element={<MyGenerations />} />
