@@ -18,10 +18,18 @@ declare module "express-session" {
 await connectDB();
 const app = express();
 
-// Middleware
+// Middleware — allow Vite dev on localhost or 127.0.0.1 with any port
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:3000/"],
+    origin: (origin, callback) => {
+      if (
+        !origin ||
+        /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin)
+      ) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   }),
 );
