@@ -7,6 +7,22 @@ import { useAuth } from "../context/AuthContext";
 import api from "../configs/api";
 import toast from "react-hot-toast";
 
+/** Mongo timestamps; fallback to ObjectId embedded time for older docs without createdAt */
+function formatThumbnailDate(thumb: IThumbnail): string {
+  const raw = thumb.createdAt ?? thumb.updatedAt;
+  if (raw != null && raw !== "") {
+    const d = new Date(raw as string | Date);
+    if (!Number.isNaN(d.getTime())) return d.toDateString();
+  }
+  const id = thumb._id;
+  if (typeof id === "string" && /^[a-f\d]{24}$/i.test(id)) {
+    const sec = parseInt(id.slice(0, 8), 16);
+    const d = new Date(sec * 1000);
+    if (!Number.isNaN(d.getTime())) return d.toDateString();
+  }
+  return "—";
+}
+
 const MyGenerations = () => {
   const { isLoggedIn } = useAuth();
 
@@ -150,7 +166,7 @@ const MyGenerations = () => {
                       </span>
                     </div>
                     <p className="text-xs text-zinc-500">
-                      {new Date(thumb.createdAt).toDateString()}
+                      {formatThumbnailDate(thumb)}
                     </p>
                   </div>
                   <div

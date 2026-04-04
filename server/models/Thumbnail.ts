@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { text } from "node:stream/consumers";
 
 export interface IThumbnail extends Document {
   userId: string;
@@ -67,7 +66,7 @@ const ThumbnailSchema = new mongoose.Schema<IThumbnail>({
   prompt_used: { type: String },
   user_prompt: { type: String },
   isGenerating: { type: Boolean, default: true },
-});
+}, { timestamps: true });
 
 const Thumbnail = mongoose.models.Thumbnail || mongoose.model<IThumbnail>("Thumbnail", ThumbnailSchema);
 export default Thumbnail;
