@@ -7,8 +7,6 @@ import {
 } from "@google/genai";
 
 import ai from "../configs/ai.js";
-import path from "path";
-import fs from "fs";
 
 import { v2 as cloudinary } from "cloudinary";
 
@@ -136,15 +134,9 @@ export const generateThumbnail = async (req: Request, res: Response) => {
       throw new Error("Image buffer not generated");
     }
 
-    // file save
-    const fileName = `final-output-${Date.now()}.png`;
-    const filePath = path.join("images", fileName);
-
-    fs.mkdirSync("images", { recursive: true });
-    fs.writeFileSync(filePath, finalBuffer);
-
-    // upload to Cloudinary
-    const uploadResult = await cloudinary.uploader.upload(filePath, {
+    // Upload from buffer (no local disk — required for serverless / read-only FS)
+    const dataUri = `data:image/png;base64,${finalBuffer.toString("base64")}`;
+    const uploadResult = await cloudinary.uploader.upload(dataUri, {
       resource_type: "image",
     });
 
@@ -153,9 +145,6 @@ export const generateThumbnail = async (req: Request, res: Response) => {
     await thumbnail.save();
 
     res.json({ message: "Thumbnail Generated", thumbnail });
-
-    // delete local file
-    fs.unlinkSync(filePath);
   } catch (error: any) {
     console.log(error);
     res.status(500).json({ message: error.message || "Server Error" });
